@@ -46,21 +46,21 @@ export class UserService {
         password: passwordHash(password),
       });
 
+      if (how_did_you_hear === WhoRefferEnum.USER) {
+        const referredUser = await this.findOne(referrer_username);
+
+        if (!referredUser)
+          return new NotFoundException(`user "${referrer_username}" not found`);
+
+        await this.referralService.create(referredUser, newUser.email);
+      }
+
       const savedUser = await this.userRepo.save(newUser);
 
-      delete newUser.password;
-
-      if (how_did_you_hear === WhoRefferEnum.USER)
-        await this.referralService.create(
-          {
-            how_did_you_hear,
-            referrer_username,
-          },
-          savedUser,
-        );
+      delete savedUser.password;
 
       return {
-        ...newUser,
+        ...savedUser,
       };
     } catch (error) {
       this.handleDBExceptions(error);
@@ -70,15 +70,10 @@ export class UserService {
   async findOne(term: string) {
     const queryBuilder = this.userRepo.createQueryBuilder();
     const user = await queryBuilder
-      .where('username LIKE :username OR email LIKE :email OR id = :id', {
-        username: `%${term}%`,
-        email: `%${term}%`,
-        id: term,
+      .where('username = :username', {
+        username: term,
       })
       .getOne();
-    if (!user) {
-      return new NotFoundException(`user with "${term}" not found`);
-    }
 
     return user;
   }

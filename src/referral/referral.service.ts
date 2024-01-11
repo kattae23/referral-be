@@ -1,5 +1,9 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { CreateReferralDto } from './dto/create-referral.dto';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Referral } from './entities/referral.entity';
 import { Repository } from 'typeorm';
@@ -15,11 +19,12 @@ export class ReferralService {
     private readonly userService: UserService,
   ) {}
 
-  async create(createReferralDto: CreateReferralDto, referee: User) {
-    const { referrer_username } = createReferralDto;
+  async create(referredUser: User, refereeEmail: string) {
+    const referee = await this.userService.findOne(refereeEmail);
 
-    const referredUser = await this.userService.findOne(referrer_username);
+    if (!referredUser)
+      return new NotFoundException(`user "${refereeEmail}" not found`);
 
-    console.log(referredUser);
+    console.log(referredUser, referee);
   }
 }
