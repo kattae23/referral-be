@@ -16,6 +16,10 @@ export class ReferralService {
   ) {}
 
   async create(createReferralDto: CreateReferralDto, referee: User) {
-    const { how_did_you_hear, referrer_username } = createReferralDto;
+    const { referrer_username } = createReferralDto;
+
+    const referredUser = await this.userService.findOne(referrer_username);
+
+    console.log(referredUser);
   }
 }
