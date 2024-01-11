@@ -50,7 +50,7 @@ export class UserService {
 
       delete newUser.password;
 
-      if (how_did_you_hear === WhoRefferEnum.USER) {
+      if (how_did_you_hear === WhoRefferEnum.USER)
         await this.referralService.create(
           {
             how_did_you_hear,
@@ -58,7 +58,6 @@ export class UserService {
           },
           savedUser,
         );
-      }
 
       return {
         ...newUser,
