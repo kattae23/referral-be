@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) Referral api
 
 ## Installation
 
@@ -45,29 +45,53 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
-## Test
+# API Endpoints Description:
 
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+## Register a New User: ✅
+```
+Method: POST
+Route: /api/users/register
+Parameters:
+username
+password
+email
+date_of_birth / optional
+how_did_you_hear
+referrer_username / optional
+(if how_did_you_hear is "I was Referred by another user", include referrer_username)
 ```
 
-## Support
+## Get User Details: ⌛
+```
+Method: GET
+Route: /api/users/{userId}
+Parameters:
+userId
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+## Get List of Referees for a User: ⌛
+```
+Method: GET
+Route: /api/users/{userId}/referrals
+Parameters:
+userId
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
+## Register a Referral: ⌛
+```
+Method: POST
+Route: /api/referrals
+Parameters:
+referrer_id
+referee_id
+```
 
-Nest is [MIT licensed](LICENSE).
+## Get User Points: ⌛
+```
+Method: GET
+Route: /api/users/{userId}/points
+Parameters:
+userId
+```
