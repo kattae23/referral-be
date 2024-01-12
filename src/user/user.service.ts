@@ -27,7 +27,7 @@ export class UserService {
       const {
         password,
         date_of_birth,
-        how_did_you_hear,
+        how_did_you_hear: whoRefferEnum,
         referrer_username,
         ...userData
       } = createUserDto;
@@ -42,17 +42,17 @@ export class UserService {
       const newUser = this.userRepo.create({
         ...userData,
         dateOfBirth: birth,
-        whoRefferEnum: how_did_you_hear,
+        whoRefferEnum,
         password: passwordHash(password),
       });
 
-      if (how_did_you_hear === WhoRefferEnum.USER) {
+      if (whoRefferEnum === WhoRefferEnum.USER) {
         const referredUser = await this.findOne(referrer_username);
 
         if (!referredUser)
           return new NotFoundException(`user "${referrer_username}" not found`);
 
-        await this.referralService.create(referredUser, newUser.email);
+        await this.referralService.create(referredUser, newUser);
       }
 
       const savedUser = await this.userRepo.save(newUser);

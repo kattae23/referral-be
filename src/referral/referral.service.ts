@@ -19,12 +19,19 @@ export class ReferralService {
     private readonly userService: UserService,
   ) {}
 
-  async create(referredUser: User, refereeEmail: string) {
-    const referee = await this.userService.findOne(refereeEmail);
+  async create(referredUser: User, referringUser: User) {
+    // const referringUser = await this.userService.findOne(refereeUsername);
 
-    if (!referredUser)
-      return new NotFoundException(`user "${refereeEmail}" not found`);
+    // if (!referredUser)
+    //   return new NotFoundException(`user "${refereeUsername}" not found`);
 
-    console.log(referredUser, referee);
+    const referral = this.referralRepo.create({
+      referredUser,
+      referringUser,
+    });
+
+    console.log(referringUser);
+
+    await this.referralRepo.save(referral);
   }
 }
