@@ -14,14 +14,14 @@ export class Referral {
   id: string;
 
   // User who reffer
-  @ManyToOne(() => User, (user) => user.referredUsers)
+  @ManyToOne(() => User, (user) => user.referredUser)
   @JoinColumn({ name: 'referred_user_id' })
   referredUser: User;
 
   // User referred
-  @ManyToOne(() => User, (user) => user.referringUsers)
-  @JoinColumn({ name: 'referring_user_id' })
-  referringUser: User;
+  @ManyToOne(() => User, (user) => user.refereeUsers)
+  @JoinColumn({ name: 'referee_users_id' })
+  refereeUsers: User;
 
   @CreateDateColumn({
     name: 'created_at',

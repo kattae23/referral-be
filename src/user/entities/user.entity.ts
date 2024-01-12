@@ -39,10 +39,10 @@ export class User {
   whoRefferEnum: WhoRefferEnum;
 
   @OneToMany(() => Referral, (referral) => referral.referredUser)
-  referredUsers: Referral[];
+  referredUser: Referral[];
 
-  @OneToMany(() => Referral, (referral) => referral.referringUser)
-  referringUsers: Referral[];
+  @OneToMany(() => Referral, (referral) => referral.refereeUsers)
+  refereeUsers: Referral[];
 
   @CreateDateColumn({
     name: 'created_at',

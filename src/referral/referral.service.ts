@@ -22,11 +22,11 @@ export class ReferralService {
     private readonly userService: UserService,
   ) {}
 
-  async create(referredUser: User, referringUser: User) {
+  async create(referredUser: User, refereeUsers: User) {
     try {
       const referral = this.referralRepo.create({
         referredUser,
-        referringUser,
+        refereeUsers,
       });
 
       return await this.referralRepo.save(referral);

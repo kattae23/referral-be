@@ -56,11 +56,13 @@ export class UserService {
       if (whoRefferEnum === WhoRefferEnum.USER) {
         const referredUser = await this.findOneBy(
           'username = :referrer_username',
-          referrer_username,
+          { referrer_username },
         );
 
         if (!referredUser)
-          return new NotFoundException(`user "${referrer_username}" not found`);
+          return new NotFoundException(
+            `Referred "${referrer_username}" not found`,
+          );
 
         savedUser = await this.userRepo.save(newUser);
         delete savedUser.password;
@@ -84,8 +86,65 @@ export class UserService {
         ...savedUser,
       };
     } catch (error) {
-      this.handleDBExceptions(error);
+      throw this.handleDBExceptions(error);
     }
+  }
+
+  async getUserDetails(userId: string) {
+    try {
+      const queryBuilder = this.userRepo.createQueryBuilder('user');
+      const user = await queryBuilder
+        .where('user.id = :userId', {
+          userId,
+        })
+        .getOne();
+
+      if (!user)
+        return new NotFoundException(`Theres no user with that id "${userId}"`);
+
+      return user;
+    } catch (error) {
+      throw this.handleDBExceptions(error);
+    }
+  }
+
+  async getUserReferees(userId: string) {
+    try {
+      const queryBuilder = this.userRepo.createQueryBuilder('user');
+      const user = await queryBuilder
+        .leftJoinAndSelect('user.referredUser', 'referredUsers')
+        .leftJoinAndSelect(
+          'referredUsers.refereeUsers',
+          'referredUsersRefereeUsers',
+        )
+        .where('user.id = :userId', {
+          userId,
+        })
+        .orderBy('referredUsers.created_at', 'ASC')
+        .orderBy('referredUsersRefereeUsers.created_at', 'ASC')
+        .getOne();
+
+      if (!user)
+        return new NotFoundException(`Theres no user with that id "${userId}"`);
+
+      const referees = user.referredUser.map(
+        (referred) => referred.refereeUsers,
+      );
+
+      return {
+        referees,
+        total: referees.length,
+      };
+    } catch (error) {
+      throw this.handleDBExceptions(error);
+    }
+  }
+
+  async getUserPoints(userId: string) {
+    const queryBuilder = this.userRepo.createQueryBuilder();
+    const user = await queryBuilder.where('id = :userId', { userId }).getOne();
+
+    return user.points;
   }
 
   async findOneBy(condition: string, search: any) {

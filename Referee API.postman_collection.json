@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "1d6e1d03-5f93-45f5-9e4f-67b2f77bafa9",
+		"name": "Referee API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25235942",
+		"_collection_link": "https://dark-flare-110921.postman.co/workspace/Kattae~b37c6b82-2221-4800-812d-cceb4b9bbdbb/collection/25235942-1d6e1d03-5f93-45f5-9e4f-67b2f77bafa9?action=share&source=collection_link&creator=25235942"
+	},
+	"item": [
+		{
+			"name": "POST - create user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"alberto3\",\r\n    \"email\": \"alfonzo3@developer.com\",\r\n    \"date_of_birth\": \"2023-10-12\",\r\n    \"password\": \"9Ks12its.\",\r\n    \"how_did_you_hear\": \"user\",\r\n    \"referrer_username\": \"alberto\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get user information",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/e67ceac6-ef53-40cb-ac5e-995e3a08cba3/referrals",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"e67ceac6-ef53-40cb-ac5e-995e3a08cba3",
+						"referrals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get user points",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users/e67ceac6-ef53-40cb-ac5e-995e3a08cba3/points",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"e67ceac6-ef53-40cb-ac5e-995e3a08cba3",
+						"points"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
