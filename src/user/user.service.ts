@@ -32,10 +32,15 @@ export class UserService {
         ...userData
       } = createUserDto;
 
-      const user = await this.userRepo.findOne({
-        where: { email: userData.email },
-      });
-      if (user) return new NotFoundException('Email already exists');
+      const user = await this.findOneBy(
+        'username = :username AND email = :email OR email = :email OR username = :username',
+        {
+          email: userData.email,
+          username: userData.username,
+        },
+      );
+      if (user)
+        return new NotFoundException('Email or username already exists');
 
       const birth = new Date(date_of_birth);
 
@@ -46,18 +51,34 @@ export class UserService {
         password: passwordHash(password),
       });
 
+      let savedUser: User;
+
       if (whoRefferEnum === WhoRefferEnum.USER) {
-        const referredUser = await this.findOne(referrer_username);
+        const referredUser = await this.findOneBy(
+          'username = :referrer_username',
+          referrer_username,
+        );
 
         if (!referredUser)
           return new NotFoundException(`user "${referrer_username}" not found`);
 
-        await this.referralService.create(referredUser, newUser);
+        savedUser = await this.userRepo.save(newUser);
+        delete savedUser.password;
+
+        const referral = await this.referralService.create(
+          referredUser,
+          savedUser,
+        );
+
+        if (referral) {
+          await this.userRepo.update(referredUser.id, {
+            points: (referredUser.points += 1),
+          });
+        }
+      } else {
+        savedUser = await this.userRepo.save(newUser);
+        delete savedUser.password;
       }
-
-      const savedUser = await this.userRepo.save(newUser);
-
-      delete savedUser.password;
 
       return {
         ...savedUser,
@@ -67,13 +88,9 @@ export class UserService {
     }
   }
 
-  async findOne(term: string) {
+  async findOneBy(condition: string, search: any) {
     const queryBuilder = this.userRepo.createQueryBuilder();
-    const user = await queryBuilder
-      .where('username = :username', {
-        username: term,
-      })
-      .getOne();
+    const user = await queryBuilder.where(condition, search).getOne();
 
     return user;
   }

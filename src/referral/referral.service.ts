@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
-  NotFoundException,
+  InternalServerErrorException,
+  Logger,
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +14,7 @@ import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ReferralService {
+  private readonly logger = new Logger('ReferralService');
   constructor(
     @InjectRepository(Referral)
     private readonly referralRepo: Repository<Referral>,
@@ -20,18 +23,25 @@ export class ReferralService {
   ) {}
 
   async create(referredUser: User, referringUser: User) {
-    // const referringUser = await this.userService.findOne(refereeUsername);
+    try {
+      const referral = this.referralRepo.create({
+        referredUser,
+        referringUser,
+      });
 
-    // if (!referredUser)
-    //   return new NotFoundException(`user "${refereeUsername}" not found`);
+      return await this.referralRepo.save(referral);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
 
-    const referral = this.referralRepo.create({
-      referredUser,
-      referringUser,
-    });
+  private handleDBExceptions(error: any): never {
+    if (error.code === '23505' || error.code === 'SQLITE_CONSTRAINT')
+      throw new BadRequestException(error.detail);
 
-    console.log(referringUser);
-
-    await this.referralRepo.save(referral);
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }

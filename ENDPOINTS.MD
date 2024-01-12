@@ -1,6 +1,6 @@
 # API Endpoints Description:
 
-## Register a New User:
+## Register a New User: ✅
 ```
 Method: POST
 Route: /api/users/register
@@ -14,7 +14,7 @@ referrer_username / optional
 (if how_did_you_hear is "I was Referred by another user", include referrer_username)
 ```
 
-## Get User Details:    
+## Get User Details: ⌛
 ```
 Method: GET
 Route: /api/users/{userId}
@@ -23,7 +23,7 @@ userId
 ```
 
 
-## Get List of Referees for a User:
+## Get List of Referees for a User: ⌛
 ```
 Method: GET
 Route: /api/users/{userId}/referrals
@@ -32,7 +32,7 @@ userId
 ```
 
 
-## Register a Referral:
+## Register a Referral: ⌛
 ```
 Method: POST
 Route: /api/referrals
@@ -41,7 +41,7 @@ referrer_id
 referee_id
 ```
 
-## Get User Points:
+## Get User Points: ⌛
 ```
 Method: GET
 Route: /api/users/{userId}/points
