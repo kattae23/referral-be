@@ -39,8 +39,7 @@ export class UserService {
           username: userData.username,
         },
       );
-      if (user)
-        return new NotFoundException('Email or username already exists');
+      if (user) throw new NotFoundException('Email or username already exists');
 
       const birth = new Date(date_of_birth);
 
@@ -60,7 +59,7 @@ export class UserService {
         );
 
         if (!referredUser)
-          return new NotFoundException(
+          throw new NotFoundException(
             `Referred "${referrer_username}" not found`,
           );
 
@@ -100,7 +99,7 @@ export class UserService {
         .getOne();
 
       if (!user)
-        return new NotFoundException(`Theres no user with that id "${userId}"`);
+        throw new NotFoundException(`Theres no user with that id "${userId}"`);
 
       return user;
     } catch (error) {
@@ -125,7 +124,7 @@ export class UserService {
         .getOne();
 
       if (!user)
-        return new NotFoundException(`Theres no user with that id "${userId}"`);
+        throw new NotFoundException(`Theres no user with that id "${userId}"`);
 
       const referees = user.referredUser.map(
         (referred) => referred.refereeUsers,
@@ -159,8 +158,6 @@ export class UserService {
       throw new BadRequestException(error.detail);
 
     this.logger.error(error);
-    throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
-    );
+    throw new BadRequestException(error);
   }
 }
