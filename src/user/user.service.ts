@@ -88,9 +88,33 @@ export class UserService {
     }
   }
 
+  async getUsers() {
+    try {
+      const queryBuilder = this.userRepo
+        .createQueryBuilder('users')
+        .leftJoinAndSelect('users.referredUser', 'referredUsers')
+        .leftJoinAndSelect(
+          'referredUsers.refereeUsers',
+          'referredUsersRefereeUsers',
+        );
+
+      const users = await queryBuilder.getMany();
+
+      return users;
+    } catch (error) {
+      throw this.handleDBExceptions(error);
+    }
+  }
+
   async getUserDetails(userId: string) {
     try {
-      const queryBuilder = this.userRepo.createQueryBuilder('user');
+      const queryBuilder = this.userRepo
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.referredUser', 'referredUsers')
+        .leftJoinAndSelect(
+          'referredUsers.refereeUsers',
+          'referredUsersRefereeUsers',
+        );
       const user = await queryBuilder
         .where('user.id = :userId', {
           userId,
@@ -115,6 +139,11 @@ export class UserService {
           'referredUsers.refereeUsers',
           'referredUsersRefereeUsers',
         )
+        .leftJoinAndSelect('user.refereeUsers', 'refereeUsers')
+        .leftJoinAndSelect(
+          'refereeUsers.referredUser',
+          'referredUsersWhoReffer',
+        )
         .where('user.id = :userId', {
           userId,
         })
@@ -130,6 +159,7 @@ export class UserService {
       );
 
       return {
+        user,
         referees,
         total: referees.length,
       };

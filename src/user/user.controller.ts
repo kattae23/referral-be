@@ -11,6 +11,11 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Get('/')
+  getUsers() {
+    return this.userService.getUsers();
+  }
+
   @Get('/:id')
   getUserDetails(@Param('id') userId: string) {
     return this.userService.getUserDetails(userId);
